@@ -1,0 +1,111 @@
+class Pessoa:
+    def __init__(self, nome, idade=None):
+        self.nome = nome
+        self.idade = idade
+
+    def apresentar(self):
+        if self.idade:
+            return f"Olá, eu sou {self.nome} e tenho {self.idade} anos."
+        return f"Olá, eu sou {self.nome}."
+
+    def __str__(self):
+        return f"Pessoa: {self.nome}"
+
+class Aluno(Pessoa):
+    def __init__(self, nome, matricula, idade=None, curso=None):
+        super().__init__(nome, idade)
+        self.matricula = matricula
+        self.curso = curso
+        self.notas = []
+
+    def apresentar(self):
+        base = super().apresentar()
+        apresentacao = base + f" Minha matrícula é {self.matricula}."
+        if self.curso:
+            apresentacao += f" Sou aluno do curso de {self.curso}."
+        return apresentacao
+
+    def adicionar_nota(self, nota):
+        self.notas.append(nota)
+        return f"Nota {nota} adicionada para {self.nome}"
+
+    def calcular_media(self):
+        if not self.notas:
+            return 0
+        return sum(self.notas) / len(self.notas)
+
+    def situacao_academica(self):
+        media = self.calcular_media()
+        if media >= 7:
+            return "Aprovado"
+        elif media >= 5:
+            return "Recuperação"
+        else:
+            return "Reprovado"
+
+class Professor(Pessoa):
+    def __init__(self, nome, disciplina, idade=None, salario=None):
+        super().__init__(nome, idade)
+        self.disciplina = disciplina
+        self.salario = salario
+
+    def apresentar(self):
+        base = super().apresentar()
+        apresentacao = base + f" Sou professor de {self.disciplina}."
+        return apresentacao
+
+    def lancar_nota(self, aluno, nota):
+        aluno.adicionar_nota(nota)
+        return f"Nota {nota} lançada para {aluno.nome}"
+
+class Coordenador(Professor):
+    def __init__(self, nome, disciplina, area_coordenacao, idade=None, salario=None):
+        super().__init__(nome, disciplina, idade, salario)
+        self.area_coordenacao = area_coordenacao
+
+    def apresentar(self):
+        base = super().apresentar()
+        return base + f" Também sou coordenador da área de {self.area_coordenacao}."
+
+    def criar_turma(self, codigo_turma):
+        return f"Turma {codigo_turma} criada com sucesso!"
+
+# Criando objetos e testando as funcionalidades
+if __name__ == "__main__":
+    # Pessoa
+    p = Pessoa("Ana", 30)
+    print(p.apresentar())
+    
+    # Aluno
+    a = Aluno("Bruno", "2025A123", 20, "Engenharia")
+    print(a.apresentar())
+    
+    # Professor
+    prof = Professor("Carlos", "Matemática", 45, 5000)
+    print(prof.apresentar())
+    
+    # Coordenador
+    coord = Coordenador("Daniel", "Física", "Pesquisa", 50, 8000)
+    print(coord.apresentar())
+    
+    # Testando funcionalidades do Aluno
+    a.adicionar_nota(8.5)
+    a.adicionar_nota(7.0)
+    a.adicionar_nota(9.0)
+    
+    print(f"\nNotas de {a.nome}: {a.notas}")
+    print(f"Média: {a.calcular_media():.2f}")
+    print(f"Situação: {a.situacao_academica()}")
+    
+    # Professor lançando nota para aluno
+    print(f"\n{prof.lancar_nota(a, 8.0)}")
+    print(f"Nova média: {a.calcular_media():.2f}")
+    
+    # Coordenador criando turma
+    print(f"\n{coord.criar_turma('T2025A')}")
+    
+    # Lista de pessoas
+    print("\n--- Lista de Pessoas ---")
+    pessoas = [p, a, prof, coord]
+    for pessoa in pessoas:
+        print(pessoa.apresentar())

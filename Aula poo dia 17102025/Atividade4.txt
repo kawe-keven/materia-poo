@@ -1,0 +1,131 @@
+class Pessoa:
+    def __init__(self, nome, idade=None):
+        self.nome = nome
+        self.idade = idade
+
+    def apresentar(self):
+        if self.idade:
+            return f"Nome: {self.nome} | Idade: {self.idade}"
+        return f"Nome: {self.nome}"
+
+class Funcionario(Pessoa):
+    def __init__(self, nome, salario, idade=None, cargo="Funcionário"):
+        super().__init__(nome, idade)
+        self.salario = salario
+        self.cargo = cargo
+
+    def apresentar(self):
+        base = super().apresentar()
+        return f"{base} | Cargo: {self.cargo} | Salário: R$ {self.salario:,.2f}"
+
+    def calcular_bonus(self):
+        return self.salario * 0.10
+
+    def aumentar_salario(self, percentual):
+        aumento = self.salario * (percentual / 100)
+        self.salario += aumento
+        return f"Salário aumentado em {percentual}%. Novo salário: R$ {self.salario:,.2f}"
+
+class Gerente(Funcionario):
+    def __init__(self, nome, salario, setor, idade=None, equipe=None):
+        super().__init__(nome, salario, idade, "Gerente")
+        self.setor = setor
+        self.equipe = equipe or []
+
+    def apresentar(self):
+        base = super().apresentar()
+        return f"{base} | Setor: {self.setor} | Tamanho da equipe: {len(self.equipe)}"
+
+    def calcular_bonus(self):
+        return self.salario * 0.20 + (len(self.equipe) * 100)
+
+    def adicionar_funcionario(self, funcionario):
+        self.equipe.append(funcionario)
+        return f"Funcionário {funcionario.nome} adicionado à equipe de {self.setor}"
+
+    def listar_equipe(self):
+        if not self.equipe:
+            return "Equipe vazia"
+        return f"Equipe de {self.setor}: {[f.nome for f in self.equipe]}"
+
+class Diretor(Gerente):
+    def __init__(self, nome, salario, setor, area_gestao, idade=None):
+        super().__init__(nome, salario, setor, idade)
+        self.cargo = "Diretor"
+        self.area_gestao = area_gestao
+
+    def apresentar(self):
+        base = super().apresentar()
+        return f"{base} | Área de Gestão: {self.area_gestao}"
+
+    def calcular_bonus(self):
+        return self.salario * 0.30 + (len(self.equipe) * 200)
+
+# Criando instâncias
+print("=== SISTEMA DE GESTÃO DE PESSOAS ===\n")
+
+p = Pessoa("Ana", 25)
+f = Funcionario("Bruno", 3500, 30, "Analista")
+g = Gerente("Carlos", 7000, "Vendas", 35)
+d = Diretor("Daniela", 15000, "Operações", "Estratégia", 45)
+
+# Adicionando funcionários à equipe do gerente
+f2 = Funcionario("Eduardo", 2800, 28, "Assistente")
+f3 = Funcionario("Fernanda", 3200, 32, "Vendedor")
+g.adicionar_funcionario(f2)
+g.adicionar_funcionario(f3)
+
+# Adicionando equipe ao diretor
+d.adicionar_funcionario(g)
+d.adicionar_funcionario(Funcionario("Gustavo", 5000, 40, "Coordenador"))
+
+# Apresentações básicas
+print("=== APRESENTAÇÕES ===")
+print(p.apresentar())
+print(f.apresentar())
+print(g.apresentar())
+print(d.apresentar())
+
+# Demonstração de funcionalidades
+print("\n=== FUNCIONALIDADES ESPECÍFICAS ===")
+print(f"\nBonuses:")
+print(f"{f.nome}: R$ {f.calcular_bonus():.2f}")
+print(f"{g.nome}: R$ {g.calcular_bonus():.2f}")
+print(f"{d.nome}: R$ {d.calcular_bonus():.2f}")
+
+print(f"\nEquipes:")
+print(g.listar_equipe())
+print(d.listar_equipe())
+
+print(f"\nAumento de salário:")
+print(f.aumentar_salario(15))
+
+# Lista heterogênea e polimorfismo
+print("\n=== LISTA DE COLABORADORES ===")
+colaboradores = [p, f, f2, f3, g, d]
+
+for i, colaborador in enumerate(colaboradores, 1):
+    print(f"{i}. {colaborador.apresentar()}")
+
+# Estatísticas
+print(f"\n=== ESTATÍSTICAS ===")
+print(f"Total de pessoas: {len(colaboradores)}")
+print(f"Pessoas comuns: {len([c for c in colaboradores if isinstance(c, Pessoa) and not isinstance(c, Funcionario)])}")
+print(f"Funcionários: {len([c for c in colaboradores if isinstance(c, Funcionario)])}")
+print(f"Gerentes: {len([c for c in colaboradores if isinstance(c, Gerente)])}")
+print(f"Diretores: {len([c for c in colaboradores if isinstance(c, Diretor)])}")
+
+# Demonstração de polimorfismo
+print(f"\n=== DEMONSTRAÇÃO DE POLIMORFISMO ===")
+def processar_bonus(lista_funcionarios):
+    total_bonus = 0
+    print("Cálculo de bônus:")
+    for func in lista_funcionarios:
+        if hasattr(func, 'calcular_bonus'):
+            bonus = func.calcular_bonus()
+            total_bonus += bonus
+            print(f"  {func.nome}: R$ {bonus:.2f}")
+    print(f"Total em bônus: R$ {total_bonus:.2f}")
+
+funcionarios = [f, f2, f3, g, d]
+processar_bonus(funcionarios)

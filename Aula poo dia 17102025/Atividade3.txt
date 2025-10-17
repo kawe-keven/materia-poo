@@ -1,0 +1,97 @@
+def apresentar_pessoa(p):
+    print(p.apresentar())
+
+class Pessoa:
+    def __init__(self, nome, idade=None):
+        self.nome = nome
+        self.idade = idade
+
+    def apresentar(self):
+        if self.idade:
+            return f"Sou {self.nome}, tenho {self.idade} anos."
+        return f"Sou {self.nome}."
+
+class Professor(Pessoa):
+    def __init__(self, nome, disciplina, idade=None, formacao=None):
+        super().__init__(nome, idade)
+        self.disciplina = disciplina
+        self.formacao = formacao
+
+    def apresentar(self):
+        base = super().apresentar()
+        if self.formacao:
+            return f"Sou o professor {self.nome}, da disciplina de {self.disciplina}. Formado em {self.formacao}."
+        return f"Sou o professor {self.nome}, da disciplina de {self.disciplina}."
+
+class Aluno(Pessoa):
+    def __init__(self, nome, turma, idade=None, notas=None):
+        super().__init__(nome, idade)
+        self.turma = turma
+        self.notas = notas or []
+
+    def apresentar(self):
+        base = super().apresentar()
+        if self.notas:
+            media = sum(self.notas) / len(self.notas)
+            return f"Sou o aluno {self.nome}, da turma {self.turma}. Média: {media:.1f}."
+        return f"Sou o aluno {self.nome}, da turma {self.turma}."
+
+    def adicionar_nota(self, nota):
+        self.notas.append(nota)
+        return f"Nota {nota} adicionada para {self.nome}"
+
+class Coordenador(Professor):
+    def __init__(self, nome, disciplina, area_coordenacao, idade=None):
+        super().__init__(nome, disciplina, idade)
+        self.area_coordenacao = area_coordenacao
+
+    def apresentar(self):
+        return f"Sou o coordenador {self.nome}, responsável pela área de {self.area_coordenacao} e professor de {self.disciplina}."
+
+# Criando instâncias
+prof = Professor("Marcos", "Matemática", 45, "Engenharia")
+aluno = Aluno("Pedro", "3A", 16, [8.5, 9.0, 7.5])
+coordenador = Coordenador("Victor", "Física", "Ensino Médio", 38)
+pessoa_comum = Pessoa("João", 30)
+
+print("=== APRESENTAÇÃO DA ESCOLA ===\n")
+
+# Lista de pessoas
+pessoas = [prof, aluno, coordenador, pessoa_comum]
+
+# Apresentando cada pessoa
+for pessoa in pessoas:
+    apresentar_pessoa(pessoa)
+
+print(f"\n=== DETALHES ADICIONAIS ===")
+
+# Demonstração de métodos específicos
+print(f"\n{aluno.nome}:")
+print(f"  Notas atuais: {aluno.notas}")
+print(f"  {aluno.adicionar_nota(8.0)}")
+print(f"  Novas notas: {aluno.notas}")
+
+# Verificando tipos
+print(f"\n=== VERIFICAÇÃO DE TIPOS ===")
+for p in pessoas:
+    if isinstance(p, Professor):
+        print(f"{p.nome} é um Professor")
+    if isinstance(p, Aluno):
+        print(f"{p.nome} é um Aluno")
+    if isinstance(p, Coordenador):
+        print(f"{p.nome} é um Coordenador")
+
+print(f"\n=== ESTATÍSTICAS ===")
+print(f"Total de pessoas: {len(pessoas)}")
+print(f"Professores: {len([p for p in pessoas if isinstance(p, Professor)])}")
+print(f"Alunos: {len([p for p in pessoas if isinstance(p, Aluno)])}")
+print(f"Coordenadores: {len([p for p in pessoas if isinstance(p, Coordenador)])}")
+
+# Testando polimorfismo com função
+print(f"\n=== TESTE DE POLIMORFISMO ===")
+def apresentar_todos(lista_pessoas):
+    print("Função de apresentação em lote:")
+    for i, pessoa in enumerate(lista_pessoas, 1):
+        print(f"{i}. {pessoa.apresentar()}")
+
+apresentar_todos(pessoas)
